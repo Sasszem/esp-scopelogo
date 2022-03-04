@@ -1,6 +1,6 @@
 #include <driver/dac.h>
 
-extern int shape[];
+extern char shape[];
 extern int length;
 
 void setup() {

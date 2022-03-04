@@ -38,8 +38,8 @@ def main(input_path: str, output: str, interpolation_factor: int):
     data = list(chain(*pairs))
     with open(output, "w", encoding="utf-8") as outfile:
         outfile.write(
-            "int shape[] = {" + ", ".join(str(point) for point in data) + "};\n")
-        outfile.write("int length = sizeof(shape)/2;\n");
+            "char shape[] = {" + ", ".join(str(point) for point in data) + "};\n")
+        outfile.write("int length = sizeof(shape)/(sizeof(shape[0]))/2;\n");
 
 if __name__ == "__main__":  # how would this ever fail?
     main() # pylint: disable=no-value-for-parameter

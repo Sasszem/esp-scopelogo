@@ -20,7 +20,7 @@ def _interpolate(elem, invstep, trans, scale):
 
 def _get_paths(filepath):
     """Read and parse all paths in file"""
-    tree = ET.parse(filepath) # pylint: disable=c-extension-no-member
+    tree = ET.parse(filepath)  # pylint: disable=c-extension-no-member
     root = tree.getroot()
 
     return [svg.path.parse_path(node.get("d")) for node in tree.findall(".//path", root.nsmap)]

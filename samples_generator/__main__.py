@@ -17,7 +17,8 @@ from read_image import read_image
 @click.argument("input_path", type=click.Path(exists=True))
 @click.argument("output", type=click.Path(), default="shape.c")
 @click.option("--interpolation-factor",
-              help="Interpolation factor (how many points per unit distance) Should be ~500 or more. Less points means less resolution.",
+              help="Interpolation factor (how many points per unit distance)"
+              "Should be ~500 or more. Less points means less resolution.",
               show_default=True,
               default=500
               )
@@ -44,7 +45,8 @@ def main(input_path: str, output: str, interpolation_factor: int, mirror: bool):
     with open(output, "w", encoding="utf-8") as outfile:
         outfile.write(
             "char shape[] = {" + ", ".join(str(point) for point in data) + "};\n")
-        outfile.write("int length = sizeof(shape)/(sizeof(shape[0]))/2;\n");
+        outfile.write("int length = sizeof(shape)/(sizeof(shape[0]))/2;\n")
+
 
 if __name__ == "__main__":  # how would this ever fail?
-    main() # pylint: disable=no-value-for-parameter
+    main()  # pylint: disable=no-value-for-parameter

@@ -21,9 +21,14 @@ from read_image import read_image
               show_default=True,
               default=500
               )
-def main(input_path: str, output: str, interpolation_factor: int):
+@click.option("--mirror", help="Mirror the image", show_default=True, default=False, type=bool)
+def main(input_path: str, output: str, interpolation_factor: int, mirror: bool):
     """Generate samples for the ESP firmware to draw from an SVG file"""
     points = read_image(input_path, interpolation_factor, False)
+
+    if mirror:
+        points = [point.conjugate() for point in points]
+
     new_points = [(p+0.5+0.5j) * 255 for p in points]
     pairs = list(map(lambda x: (int(x.real), int(x.imag)), new_points))
 

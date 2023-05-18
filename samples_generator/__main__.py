@@ -12,7 +12,6 @@ from itertools import chain
 import click
 from read_image import read_image
 
-
 @click.command()
 @click.argument("input_path", type=click.Path(exists=True))
 @click.argument("output", type=click.Path(), default="shape.c")
@@ -22,8 +21,9 @@ from read_image import read_image
               show_default=True,
               default=500
               )
-@click.option("--mirror", help="Mirror the image", show_default=True, default=False, type=bool)
-def main(input_path: str, output: str, interpolation_factor: int, mirror: bool):
+@click.option("--mirror/--no-mirror", help="Mirror the image", show_default=True, default=False, type=bool)
+@click.option("--export", help="Export resulting image using PIL into specified filename", show_default=True, type=str, default=None)
+def main(input_path: str, output: str, interpolation_factor: int, mirror: bool, export: str):
     """Generate samples for the ESP firmware to draw from an SVG file"""
     points = read_image(input_path, interpolation_factor, False)
 
@@ -42,6 +42,9 @@ def main(input_path: str, output: str, interpolation_factor: int, mirror: bool):
     pairs = new_pairs
 
     data = list(chain(*pairs))
+    if export:
+        from write_image import export_image
+        export_image(data, export)
     with open(output, "w", encoding="utf-8") as outfile:
         outfile.write(
             "char shape[] = {" + ", ".join(str(point) for point in data) + "};\n")

@@ -19,3 +19,5 @@ Usage:
 - you might need to filp the image using scope controls or rotate it by swapping the channels
 
 Used some of the SVG reading code from my [`fourieranim` project](https://github.com/sasszem/fourieranim)
+
+Note: the svg.path library does not handle matrix transforms well, in that case applying the transforms to the coordinates with the [apply transform plugin for inkscape](https://github.com/Klowner/inkscape-applytransforms) does the trick.

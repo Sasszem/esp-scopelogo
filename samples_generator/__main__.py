@@ -11,6 +11,7 @@ to 8-bit numbers.
 from itertools import chain
 import click
 from read_image import read_image
+import pickle as pck
 
 @click.command()
 @click.argument("input_path", type=click.Path(exists=True))
@@ -23,7 +24,8 @@ from read_image import read_image
               )
 @click.option("--mirror/--no-mirror", help="Mirror the image", show_default=True, default=False, type=bool)
 @click.option("--export", help="Export resulting image using PIL into specified filename", show_default=True, type=str, default=None)
-def main(input_path: str, output: str, interpolation_factor: int, mirror: bool, export: str):
+@click.option("--pickle", help="Save data into pickle file", type=str, default=None)
+def main(input_path: str, output: str, interpolation_factor: int, mirror: bool, export: str, pickle: str):
     """Generate samples for the ESP firmware to draw from an SVG file"""
     points = read_image(input_path, interpolation_factor, False)
 
@@ -45,10 +47,14 @@ def main(input_path: str, output: str, interpolation_factor: int, mirror: bool, 
     if export:
         from write_image import export_image
         export_image(data, export)
-    with open(output, "w", encoding="utf-8") as outfile:
-        outfile.write(
-            "char shape[] = {" + ", ".join(str(point) for point in data) + "};\n")
-        outfile.write("int length = sizeof(shape)/(sizeof(shape[0]))/2;\n")
+    if pickle:
+        with open(pickle, "wb") as f:
+            pck.dump(data, f)
+    else:
+        with open(output, "w", encoding="utf-8") as outfile:
+            outfile.write(
+                "char shape[] = {" + ", ".join(str(point) for point in data) + "};\n")
+            outfile.write(f"int length = {len(data)//2};\n")
 
 
 if __name__ == "__main__":  # how would this ever fail?

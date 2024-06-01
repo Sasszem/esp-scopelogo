@@ -1,23 +1,26 @@
 #include <driver/dac.h>
-#include <WiFi.h>
-#include <ESPmDNS.h>
-#include <WiFiUdp.h>
-#include <ArduinoOTA.h>
+#include "settings.h"
+/*
+OTA imports and OTA task code
+*/
+#ifdef ENABLE_OTA
+  #include <WiFi.h>
+  #include <ESPmDNS.h>
+  #include <WiFiUdp.h>
+  #include <ArduinoOTA.h>
 
-const char* ssid = "Beta-source";
-const char* password = "ferdinandbraun";
+  TaskHandle_t OTATask;
 
-TaskHandle_t OTATask;
+  void OTATaskCode( void * parameter) {
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP(OTA_SSID, OTA_PASS);
+    ArduinoOTA.begin();
 
-void OTATaskCode( void * parameter) {
-  WiFi.mode(WIFI_AP);
-  WiFi.softAP(ssid, password);
-  ArduinoOTA.begin();
-
-  for(;;) {
-    ArduinoOTA.handle();
+    for(;;) {
+      ArduinoOTA.handle();
+    }
   }
-}
+#endif
 
 extern char data[];
 extern int sizes[];
@@ -26,7 +29,6 @@ extern int count;
 
 int selected_index = 0;
 
-const int BUTTON_PIN = 13;
 
 void setup() {
   // put your setup code here, to run once:
@@ -34,22 +36,29 @@ void setup() {
   dac_output_enable(DAC_CHANNEL_2);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(LED_BUILTIN, OUTPUT);
-  digitalWrite(LED_BUILTIN, HIGH);
 
-  delay(100);
-
-
-  if (digitalRead(BUTTON_PIN) == LOW) {
+  #ifndef OTA
+    // NO OTA, just light up the LED
     digitalWrite(LED_BUILTIN, LOW);
-    xTaskCreatePinnedToCore(
-          OTATaskCode, /* Function to implement the task */
-          "OTA task", /* Name of the task */
-          10000,  /* Stack size in words */
-          NULL,  /* Task input parameter */
-          0,  /* Priority of the task */
-          &OTATask,  /* Task handle. */
-          0); /* Core where the task should run */
-  }
+  #else
+    // OTA - diable led, activate OTA if needed
+    digitalWrite(LED_BUILTIN, HIGH);
+
+    delay(100);
+
+
+    if (digitalRead(BUTTON_PIN) == LOW) {
+      digitalWrite(LED_BUILTIN, LOW);
+      xTaskCreatePinnedToCore(
+            OTATaskCode, /* Function to implement the task */
+            "OTA task", /* Name of the task */
+            10000,  /* Stack size in words */
+            NULL,  /* Task input parameter */
+            0,  /* Priority of the task */
+            &OTATask,  /* Task handle. */
+            0); /* Core where the task should run */
+    }
+  #endif
 }
 
 int handle_button() {

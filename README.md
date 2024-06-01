@@ -20,6 +20,7 @@ Usage:
 - use scope controls to adjust image position and size
 - you might need to filp the image using scope controls or rotate it by swapping the channels
 - you can switch between images via connecting a button between the pin specified in `firmware.ino` (can be changed to any pin featuring pullup, software debouncing is provided)
+- after the first upload, the ESP has OTG functionality. Hold down the button while powering up to activate (the builtin LED will also light up). SSID and PW can be set in `firmware.ino`
 
 Used some of the SVG reading code from my [`fourieranim` project](https://github.com/sasszem/fourieranim)
 

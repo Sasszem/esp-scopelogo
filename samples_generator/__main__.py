@@ -55,7 +55,7 @@ def main(input_path: str, output: str, interpolation_factor: int, mirror: bool, 
             outfile.write(
                 "char shape[] = {" + ", ".join(str(point) for point in data) + "};\n")
             outfile.write(f"int length = {len(data)//2};\n")
-
+    print(f"Samples count: {len(data)//2}")
 
 if __name__ == "__main__":  # how would this ever fail?
     main()  # pylint: disable=no-value-for-parameter
